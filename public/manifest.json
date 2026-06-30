@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Zuza Messenger Agent",
+  "version": "3.0.0",
+  "description": "Background Orchestrated AI for Messenger",
+  "permissions": ["storage", "activeTab", "scripting", "alarms"],
+  "host_permissions": [
+    "*://www.messenger.com/*",
+    "*://messenger.com/*",
+    "*://*.facebook.com/*",
+    "*://*.fbcdn.net/*",
+    "https://*.supabase.co/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.messenger.com/*",
+        "*://messenger.com/*",
+        "*://*.facebook.com/*"
+      ],
+      "js": ["content.js"],
+      "all_frames": true
+    }
+  ],
+  "externally_connectable": {
+    "matches": [
+      "http://localhost/*",
+      "http://127.0.0.1/*"
+    ]
+  }
+}
