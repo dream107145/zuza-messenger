@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1",
     "build": "tsc -b && vite build",
+    "build:telegram": "tsc -p tsconfig.telegram.json --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
     "memory": "node sqlite_server.js",
@@ -13,7 +14,9 @@
     "purge-session": "node purge_session.js",
     "reset-build": "node reset_and_build.js",
     "bundle": "node bundle.cjs",
-    "telegram": "tsx src/telegram/bot.ts"
+    "telegram": "tsx src/telegram/bot.ts",
+    "telegram:user": "tsx src/telegram/userClient.ts",
+    "telegram:login": "tsx src/telegram/login.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -27,13 +30,15 @@
     "@tailwindcss/vite": "^4.3.0",
     "better-sqlite3": "^12.10.0",
     "clsx": "^2.1.1",
+    "discord.js": "^14.26.4",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.16.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "tailwind-merge": "^3.6.0",
     "telegraf": "^4.16.3",
-    "dotenv": "^16.5.0"
+    "telegram": "^2.26.22"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

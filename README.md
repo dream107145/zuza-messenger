@@ -1,6 +1,6 @@
 # AutoMessenger (Zuza Agent)
 
-AI chat persona **Zuza** — a fun, human-like 19-year-old who replies in **English or Polish**. Available as:
+AI chat persona **Zuza** — a fun, human-like 19-year-old who replies in **English**. Available as:
 
 - **Telegram bot** — run a bot that auto-replies on Telegram (recommended)
 - **Chrome extension** — auto-replies on Facebook Messenger
@@ -14,7 +14,7 @@ Includes a **React dashboard** for configuration, mood switching, and activity l
 - **Telegram bot** — message Zuza on Telegram with human-like typing delays
 - **Messenger extension** — detects incoming Facebook messages and auto-replies
 - **Human-like behavior** — random read/typing delays, debounced message batching, casual texting
-- **Bilingual** — replies in **English or Polish**, matching whatever language the other person uses
+- **English only** — always replies in English
 - **Very fun personality** — witty, chaotic, playful (normal mood)
 - **Three moods** — `normal` (fun & witty), `freaky` (flirty), `cold` (dry & dismissive)
 - **Multiple AI providers** — Google Gemini, OpenAI, or local models (Ollama / LM Studio)
@@ -95,61 +95,77 @@ The extension background worker uses Supabase credentials baked in at build time
 
 ---
 
-## Telegram bot (recommended)
+## Telegram — personal account (stealth, recommended)
 
-### 1. Create a bot
+Replies are sent **from your real Telegram account**. No "BOT" badge — other people see normal messages from you.
 
-1. Open [@BotFather](https://t.me/BotFather) on Telegram
-2. Send `/newbot` and follow the prompts
-3. Copy the token into `.env` as `TELEGRAM_BOT_TOKEN`
+### 1. Get API credentials
 
-### 2. Configure AI (dashboard)
+1. Go to [my.telegram.org](https://my.telegram.org) and log in
+2. Open **API development tools**
+3. Create an app (any name)
+4. Copy **api_id** and **api_hash** into `.env`:
+
+```env
+TELEGRAM_API_ID=12345678
+TELEGRAM_API_HASH=your-api-hash
+```
+
+### 2. Log in once (save session)
+
+```bash
+npm run telegram:login
+```
+
+Enter your phone number, SMS/app code, and 2FA password if you have one.
+
+Copy the printed `TELEGRAM_SESSION=...` line into `.env`.
+
+### 3. Configure AI (dashboard)
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173` → **Settings** → set provider, API key, model → **DEPLOY CONFIGURATION**.
+Open `http://localhost:5173` → **Settings** → API key + model → **DEPLOY CONFIGURATION**.
 
-Switch mood in the **Brain** tab (`normal` = fun, `freaky` = flirty, `cold` = dismissive).
-
-### 3. Start memory server (optional)
+### 4. Run
 
 ```bash
-npm run memory
+npm run memory          # optional — conversation memory
+npm run telegram:user     # start as YOUR account
 ```
 
-### 4. Run the bot
+When someone DMs you on Telegram, Zuza replies **as you** with typing delays.
+
+**Stealth settings in `.env`:**
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TELEGRAM_REPLY_GROUPS` | `false` | Only private DMs (recommended). Set `true` for groups too. |
+| `TELEGRAM_ALLOWED_USERS` | (empty) | Comma-separated user IDs — only reply to these people |
+
+> **Warning:** Automating a user account may violate Telegram's Terms of Service and can risk account restrictions. Use at your own risk. Private DMs only is safer than groups.
+
+---
+
+## Telegram — bot mode (visible BOT badge)
+
+Use this only if you want a separate `@YourBot` account (people will see it's a bot).
+
+### 1. Create a bot
+
+1. Open [@BotFather](https://t.me/BotFather)
+2. Send `/newbot` and follow the prompts
+3. Copy the token into `.env` as `TELEGRAM_BOT_TOKEN`
+
+### 2. Run
 
 ```bash
 npm run telegram
 ```
 
-You should see:
-
-```
-🤖 Starting Zuza Telegram bot...
-✅ AI ready [gemini] mood: normal
-🚀 Telegram bot is running. Press Ctrl+C to stop.
-```
-
-### 5. Chat on Telegram
-
-Open your bot in Telegram and send a message. Zuza will:
-
-1. Wait 3.5–9 seconds (batches rapid messages)
-2. Show **typing...** indicator with human-like duration
-3. Reply in English or Polish (matches your language)
-
-**Bot commands:**
-
-| Command | Description |
-|---------|-------------|
-| `/start` | Welcome message |
-| `/status` | AI provider and mood status |
-| `/mood` | Show current mood |
-
-Memory is stored per Telegram chat as `tg:{chatId}:{name}` in the SQLite memory server.
+**Bot commands:** `/start`, `/status`
 
 ---
 
@@ -247,7 +263,7 @@ Switch Zuza's personality mood. Only one persona should be `enabled` in Supabase
 
 | Mood | Button label | Behavior |
 |------|--------------|----------|
-| `normal` | normal | Fun, chaotic, witty bestie energy. Short casual replies. English or Polish. |
+| `normal` | normal | Fun, chaotic, witty bestie energy. Short casual replies. English only. |
 | `freaky` | seksualny | Flirty, passionate, teasing. For intimate chats. |
 | `cold` | cold | Dry, dismissive, 1-word replies. Ignores boring questions. |
 
@@ -371,7 +387,9 @@ Then reload the extension in `chrome://extensions`.
 | `memory` | `npm run memory` | Start SQLite memory server on port 11435 |
 | `wipe-memory` | `npm run wipe-memory` | Delete all stored conversation memory |
 | `purge-session` | `npm run purge-session "Name"` | Delete memory for one contact |
-| `telegram` | `npm run telegram` | **Run Telegram bot** (requires `TELEGRAM_BOT_TOKEN` in `.env`) |
+| `telegram:user` | `npm run telegram:user` | **Run as your personal account** (stealth, no bot badge) |
+| `telegram:login` | `npm run telegram:login` | One-time login to get `TELEGRAM_SESSION` |
+| `telegram` | `npm run telegram` | Run @BotFather bot (visible BOT badge) |
 | `bundle` | `npm run bundle` | Rebuild Chrome extension (`content.js` + `background.js`) |
 
 | `reset-build` | `npm run reset-build` | Wipe memory + rebuild extension bundle |

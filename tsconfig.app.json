@@ -21,5 +21,13 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/telegram/**",
+    "src/background.ts",
+    "src/content.ts",
+    "src/automation/**",
+    "src/lib/aiEngine.ts",
+    "src/lib/gemini.ts"
+  ]
 }
